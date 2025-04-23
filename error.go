@@ -2,7 +2,7 @@
 //
 // This package demonstrates how to handle errors in Go using the
 // standard library's error handling capabilities.
-package main
+package go_error_handling
 
 import "fmt"
 
@@ -23,6 +23,12 @@ func (e ErrDivideByZero) Error() string {
 }
 
 // Divide function that returns an error if the second argument is zero
+//
+// # Example:
+//
+//	result, err := Divide(10, 0)
+//
+// - This function demonstrates how to handle errors in Go.
 func Divide(a, b int) (int, error) {
 	if b == 0 {
 		return 0, fmt.Errorf("divide: %w", ErrDivideByZero{
@@ -64,18 +70,4 @@ func UserHandlerAction(p string, a int, b int) (string, int, error) {
 	}
 
 	return q, d, nil
-}
-
-func main() {
-	fmt.Println("Error Handling in Go")
-
-	_, _, err := UserHandlerAction("", 1, 2)
-	if err != nil {
-		fmt.Println("Error 1:", err)
-	}
-
-	_, _, err = UserHandlerAction("tyty", 1, 0)
-	if err != nil {
-		fmt.Println("Error 2:", err)
-	}
 }
