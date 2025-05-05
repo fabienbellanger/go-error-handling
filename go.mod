@@ -1,3 +1,3 @@
 module github.com/fabienbellanger/go-error-handling
 
-go 1.24.2
+go 1.24

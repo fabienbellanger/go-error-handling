@@ -3,40 +3,49 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 
-	go_error_handling "github.com/fabienbellanger/go-error-handling"
-	"github.com/fabienbellanger/go-error-handling/apperror"
+	"github.com/fabienbellanger/go-error-handling/xerr"
 )
 
+var ErrClassic = errors.New("a classic error")
+
+type Person struct {
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
 func main() {
-	fmt.Println("Error Handling in Go")
+	fmt.Println("\nError Handling in Go")
+	fmt.Print("--------------------\n\n")
 
-	_, _, err := go_error_handling.UserHandlerAction("", 1, 2)
-	if err != nil {
-		fmt.Println("Error 1:", err)
-	}
-	_, _, err = go_error_handling.UserHandlerAction("tyty", 1, 0)
-	if err != nil {
-		fmt.Println("Error 2:", err)
-	}
-
-	err2 := testB(false)
-	e, _ := err2.JSON()
-	log.Printf("Err: %s", e)
+	testErr()
 }
 
-func testA(ok bool) apperror.Err {
+func testErr() {
+	err := testB(false)
+	fmt.Printf("Err: \n%s\n\n", err)
+
+	e, _ := err.JSON()
+	fmt.Printf("Err JSON: \n%s\n\n", e)
+}
+
+func testA(ok bool) (err xerr.Err) {
 	if !ok {
-		return apperror.NewErr(errors.New("a classic error"), "Error in testA", nil, nil)
+		return xerr.NewErr(ErrClassic, "Error in testA", Person{Name: "test", Age: 12}, nil)
 	}
-	return apperror.EmptyErr()
+
+	return
 }
 
-func testB(ok bool) apperror.Err {
+func testB(ok bool) xerr.Err {
 	err := testA(ok)
-	if err.IsErr() {
-		return apperror.NewErr(nil, "Error in testB", nil, &err)
+	if err.IsError() {
+		if err.Is(ErrClassic) {
+			fmt.Println("Error in testB: a classic error")
+		}
+
+		return xerr.NewErr(errors.New("my super error"), "Error in testB", nil, &err)
 	}
-	return apperror.EmptyErr()
+
+	return xerr.EmptyErr()
 }
